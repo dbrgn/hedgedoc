@@ -61,7 +61,7 @@ export class NotesController {
     @RequestUser() user: User,
     @Param('noteIdOrAlias', GetNotePipe) note: Note,
   ): Promise<NoteDto> {
-    if (!this.permissionsService.mayRead(user, note)) {
+    if (!(await this.permissionsService.mayRead(user, note))) {
       throw new UnauthorizedException('Reading note denied!');
     }
     await this.historyService.updateHistoryEntryTimestamp(note, user);
@@ -73,7 +73,7 @@ export class NotesController {
     @Param('noteIdOrAlias', GetNotePipe) note: Note,
     @RequestUser() user: User,
   ): Promise<MediaUploadDto[]> {
-    if (!this.permissionsService.mayRead(user, note)) {
+    if (!(await this.permissionsService.mayRead(user, note))) {
       throw new UnauthorizedException('Reading note denied!');
     }
     const media = await this.mediaService.listUploadsByNote(note);
@@ -150,7 +150,7 @@ export class NotesController {
     @RequestUser() user: User,
     @Param('noteIdOrAlias', GetNotePipe) note: Note,
   ): Promise<RevisionMetadataDto[]> {
-    if (!this.permissionsService.mayRead(user, note)) {
+    if (!(await this.permissionsService.mayRead(user, note))) {
       throw new UnauthorizedException('Reading note denied!');
     }
     const revisions = await this.revisionsService.getAllRevisions(note);
@@ -167,7 +167,7 @@ export class NotesController {
     @RequestUser() user: User,
     @Param('noteIdOrAlias', GetNotePipe) note: Note,
   ): Promise<void> {
-    if (!this.permissionsService.mayRead(user, note)) {
+    if (!(await this.permissionsService.mayRead(user, note))) {
       throw new UnauthorizedException('Reading note denied!');
     }
     this.logger.debug(
@@ -189,7 +189,7 @@ export class NotesController {
     @Param('revisionId') revisionId: number,
   ): Promise<RevisionDto> {
     try {
-      if (!this.permissionsService.mayRead(user, note)) {
+      if (!(await this.permissionsService.mayRead(user, note))) {
         throw new UnauthorizedException('Reading note denied!');
       }
       return this.revisionsService.toRevisionDto(

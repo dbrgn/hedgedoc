@@ -108,7 +108,7 @@ export class NotesController {
     @RequestUser() user: User,
     @Param('noteIdOrAlias', GetNotePipe) note: Note,
   ): Promise<NoteDto> {
-    if (!this.permissionsService.mayRead(user, note)) {
+    if (!(await this.permissionsService.mayRead(user, note))) {
       throw new UnauthorizedException('Reading note denied!');
     }
     await this.historyService.updateHistoryEntryTimestamp(note, user);
@@ -187,7 +187,7 @@ export class NotesController {
     @Param('noteIdOrAlias', GetNotePipe) note: Note,
     @MarkdownBody() text: string,
   ): Promise<NoteDto> {
-    if (!this.permissionsService.mayWrite(user, note)) {
+    if (!(await this.permissionsService.mayWrite(user, note))) {
       throw new UnauthorizedException('Updating note denied!');
     }
     this.logger.debug('Got raw markdown:\n' + text, 'updateNote');
@@ -208,7 +208,7 @@ export class NotesController {
     @RequestUser() user: User,
     @Param('noteIdOrAlias', GetNotePipe) note: Note,
   ): Promise<string> {
-    if (!this.permissionsService.mayRead(user, note)) {
+    if (!(await this.permissionsService.mayRead(user, note))) {
       throw new UnauthorizedException('Reading note denied!');
     }
     return await this.noteService.getNoteContent(note);
@@ -225,7 +225,7 @@ export class NotesController {
     @RequestUser() user: User,
     @Param('noteIdOrAlias', GetNotePipe) note: Note,
   ): Promise<NoteMetadataDto> {
-    if (!this.permissionsService.mayRead(user, note)) {
+    if (!(await this.permissionsService.mayRead(user, note))) {
       throw new UnauthorizedException('Reading note denied!');
     }
     return await this.noteService.toNoteMetadataDto(note);
@@ -263,7 +263,7 @@ export class NotesController {
     @RequestUser() user: User,
     @Param('noteIdOrAlias', GetNotePipe) note: Note,
   ): Promise<RevisionMetadataDto[]> {
-    if (!this.permissionsService.mayRead(user, note)) {
+    if (!(await this.permissionsService.mayRead(user, note))) {
       throw new UnauthorizedException('Reading note denied!');
     }
     const revisions = await this.revisionsService.getAllRevisions(note);
@@ -286,7 +286,7 @@ export class NotesController {
     @Param('noteIdOrAlias', GetNotePipe) note: Note,
     @Param('revisionId') revisionId: number,
   ): Promise<RevisionDto> {
-    if (!this.permissionsService.mayRead(user, note)) {
+    if (!(await this.permissionsService.mayRead(user, note))) {
       throw new UnauthorizedException('Reading note denied!');
     }
     try {
@@ -313,7 +313,7 @@ export class NotesController {
     @RequestUser() user: User,
     @Param('noteIdOrAlias', GetNotePipe) note: Note,
   ): Promise<MediaUploadDto[]> {
-    if (!this.permissionsService.mayRead(user, note)) {
+    if (!(await this.permissionsService.mayRead(user, note))) {
       throw new UnauthorizedException('Reading note denied!');
     }
     const media = await this.mediaService.listUploadsByNote(note);
