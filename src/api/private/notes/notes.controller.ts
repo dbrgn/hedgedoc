@@ -77,7 +77,9 @@ export class NotesController {
       throw new UnauthorizedException('Reading note denied!');
     }
     const media = await this.mediaService.listUploadsByNote(note);
-    return media.map((media) => this.mediaService.toMediaUploadDto(media));
+    return await Promise.all(
+      media.map((media) => this.mediaService.toMediaUploadDto(media)),
+    );
   }
 
   @Post()
